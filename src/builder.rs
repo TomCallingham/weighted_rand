@@ -71,6 +71,20 @@ impl NewBuilder<f32> for WalkerTableBuilder {
     }
 }
 
+impl NewBuilder<f64> for WalkerTableBuilder {
+    fn new(index_weights: &[f64]) -> WalkerTableBuilder {
+        let ws = index_weights
+            .iter()
+            .map(|w| (w * 10000.0).round() as u32)
+            .collect::<Vec<u32>>();
+
+        let gcd = gcd_for_slice(&ws);
+        let ws = ws.iter().map(|w| w / gcd).collect::<Vec<u32>>();
+
+        WalkerTableBuilder::new(&ws)
+    }
+}
+
 impl WalkerTableBuilder {
     /// Builds a new instance of [`WalkerTable`].
     pub fn build(&self) -> WalkerTable {
